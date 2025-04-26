@@ -1,0 +1,24 @@
+services:
+  retroarch:
+    build: ./
+    container_name: emuweb-mono
+    volumes:
+      - ./retroarch/roms:/root/roms/
+      - /run/udev:/run/udev
+      - /dev/input:/dev/input
+    environment:
+      - ROM=contra.nes
+    ports:
+      - 8000:8000
+    devices:
+      - /dev/video1
+    device_cgroup_rules:
+      - 'c 13:* rmw'
+    
+  events-server:
+      container_name: virtual-gamepad
+      build: ./events-server
+      ports:
+        - 8090:8090
+      devices:
+        - /dev/uinput

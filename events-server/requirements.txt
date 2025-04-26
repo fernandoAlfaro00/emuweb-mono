@@ -1,0 +1,2 @@
+websockets==15.0.1
+evdev==1.9.1
