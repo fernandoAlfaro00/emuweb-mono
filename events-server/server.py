@@ -1,4 +1,5 @@
 from evdev import UInput, AbsInfo, ecodes as e
+import os
 import asyncio
 import websockets
 import json
@@ -33,38 +34,69 @@ capabilities = {
 
 # Crear el dispositivo virtual
 ui = UInput(events=capabilities,
-            name="NES Virtual Gamepad",
+            name="VirtualGamepad0",
+            bustype=e.BUS_USB)
+
+ui1 = UInput(events=capabilities,
+            name="VirtualGamepad1",
             bustype=e.BUS_USB)
 
 # Variables para llevar el registro de teclas presionadas
-pressed_keys = set()
+pressed_keys_player0 = set()
+pressed_keys_player1 = set()
 async def handler(websocket):
+    
     async for message in websocket:
         try:
+            print("Cliente conectado en '/' (raíz)")
             data = json.loads(message)
+            print(data)
             key = data.get("key")
+            player = data.get("player")
             event = data.get("event")
 
-            if key in pressed_keys and event == 'keydown':
+            if key in pressed_keys_player0 and event == 'keydown' and player == '0':
                 continue  # Evita repetir si ya está presionado
 
-            if event == "keydown":
-                pressed_keys.add(key)
-                print("Presionado tecla "+key)
+            if key in pressed_keys_player1 and event == 'keydown' and player == '1':
+                continue  # Evita repetir si ya está presionado
+
+            if event == "keydown" and player == '0':
+                pressed_keys_player0.add(key)
+                print("player 0 Presionado tecla "+key)
                 if key in KEY_MAPPING:
                     code = KEY_MAPPING[key]
                     if code in [e.BTN_A, e.BTN_B, e.BTN_START, e.BTN_SELECT ,  e.BTN_DPAD_UP, e.BTN_DPAD_DOWN, e.BTN_DPAD_LEFT, e.BTN_DPAD_RIGHT ]:
                         ui.write(e.EV_KEY, code, 1)
                     ui.syn()
 
-            elif event == "keyup":
-                pressed_keys.remove(key)
-                print("Soltando tecla "+key)
+            elif event == "keyup" and player == '0':
+                pressed_keys_player0.remove(key)
+                print("player 0 Soltando tecla "+key)
                 if key in KEY_MAPPING:
                     code = KEY_MAPPING[key]
                     if code in [e.BTN_A, e.BTN_B, e.BTN_START, e.BTN_SELECT ,  e.BTN_DPAD_UP, e.BTN_DPAD_DOWN, e.BTN_DPAD_LEFT, e.BTN_DPAD_RIGHT ]:
                         ui.write(e.EV_KEY, code, 0)
                     ui.syn()
+
+
+            if event == "keydown" and player == '1':
+                pressed_keys_player1.add(key)
+                print("player 1 Presionado tecla "+key)
+                if key in KEY_MAPPING:
+                    code = KEY_MAPPING[key]
+                    if code in [e.BTN_A, e.BTN_B, e.BTN_START, e.BTN_SELECT ,  e.BTN_DPAD_UP, e.BTN_DPAD_DOWN, e.BTN_DPAD_LEFT, e.BTN_DPAD_RIGHT ]:
+                        ui1.write(e.EV_KEY, code, 1)
+                    ui1.syn()
+
+            elif event == "keyup" and player == '1':
+                pressed_keys_player1.remove(key)
+                print("player 1 Soltando tecla "+key)
+                if key in KEY_MAPPING:
+                    code = KEY_MAPPING[key]
+                    if code in [e.BTN_A, e.BTN_B, e.BTN_START, e.BTN_SELECT ,  e.BTN_DPAD_UP, e.BTN_DPAD_DOWN, e.BTN_DPAD_LEFT, e.BTN_DPAD_RIGHT ]:
+                        ui1.write(e.EV_KEY, code, 0)
+                    ui1.syn()
 
         except Exception as ex:
             print("Error:", ex)

@@ -17,22 +17,26 @@
 			webRtcServer.connect("videocap://0", "audiocap://0");
 		}
 		window.onbeforeunload = function() { webRtcServer.disconnect(); }
+
 		const ws = new WebSocket('ws://localhost:8090');
+		const urlParams = new URLSearchParams(window.location.search);
+		const player  = urlParams.get('player');
+
 		document.addEventListener('keydown', (e) => {
-			ws.send(JSON.stringify({ event: 'keydown', key: e.key }));
+			ws.send(JSON.stringify({ event: 'keydown', player: player ,  key: e.key }));
+			console.log(`player id: ${player}`);
 			console.log(`Tecla presionada: ${e.key}`);
 		});
 	
 		document.addEventListener('keyup', (e) => {
-			ws.send(JSON.stringify({ event: 'keyup', key: e.key }));
+			ws.send(JSON.stringify({ event: 'keyup', player: player ,  key: e.key }));
+			console.log(`player id: ${player}`);
 			console.log(`Tecla liberada: ${e.key}`);
 		});
-	
+
 		const boton = document.getElementById('btn_game_reset');
 		boton.addEventListener("click", (e) => {
-			ws.send(JSON.stringify({ event: 'keydown', key: e.key }));
-			console.log(`Presionando boton reinicio`);
-			ws.send(JSON.stringify({ event: 'keyup', key: e.key }));
+			console.log(`no habilitado`);
 		});
 	
 	</script>

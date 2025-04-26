@@ -20,5 +20,7 @@ services:
       build: ./events-server
       ports:
         - 8090:8090
+        - 3478:3478
+        - 3479:3479
       devices:
         - /dev/uinput

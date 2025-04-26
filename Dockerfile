@@ -4,34 +4,35 @@ RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* 
 
 ENV LANG=en_US.utf8
 
-ARG src="./retroarch/.config/autoconfig/NES Virtual Gamepad.cfg"
-ARG target=".config/retroarch/autoconfig/udev/NES Virtual Gamepad.cfg"
-
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive \
-	apt-get install -y --no-install-recommends \
-	libssl-dev libasound2-dev libgtk-3-0 libxtst6 \
-	libsm6 libpulse0 librtmp1 avahi-utils \
-	wget \
-    unzip \
-    retroarch \
-    xvfb \
-    pipewire \
-    pipewire-pulse \
-    ffmpeg \
-    wireplumber \
-    pulseaudio-utils \
-    libportaudio2 \
-    pipewire-audio-client-libraries \
-    alsa-utils \
-    ca-certificates \
-	dbus-x11 \
-    rtkit \
-	&& apt-get clean && rm -rf /var/lib/apt/lists/ 
-	# && useradd -m user -G video,audio \
+apt-get install -y --no-install-recommends \
+libssl-dev libasound2-dev libgtk-3-0 libxtst6 \
+libsm6 libpulse0 librtmp1 avahi-utils \
+wget \
+unzip \
+retroarch \
+xvfb \
+pipewire \
+pipewire-pulse \
+ffmpeg \
+wireplumber \
+pulseaudio-utils \
+libportaudio2 \
+pipewire-audio-client-libraries \
+alsa-utils \
+ca-certificates \
+dbus-x11 \
+curl \
+rtkit \
+&& apt-get clean && rm -rf /var/lib/apt/lists/ 
+# && useradd -m user -G video,audio \
 
 RUN wget -O /tmp/nestopia_libretro.so.zip \
 https://buildbot.libretro.com/nightly/linux/x86_64/latest/nestopia_libretro.so.zip \
 && unzip /tmp/nestopia_libretro.so.zip -d /usr/lib/x86_64-linux-gnu/libretro
+
+ARG src="./retroarch/.config/autoconfig"
+ARG target=".config/retroarch/autoconfig/udev"
 
 ENV DBUS_FATAL_WARNINGS=0 
 ENV DISPLAY=:99
