@@ -31,6 +31,8 @@ echo "Starting capturing..."
 ffmpeg -f x11grab -video_size 1280x720 -i $DISPLAY -f v4l2 /dev/video1 &
 
 echo "Running Server webRTC..."
+sed "s|__ENDPOINT_WS__|${ENDPOINT_WS}|g" /usr/local/share/webrtc-streamer/html/env.template.js > /usr/local/share/webrtc-streamer/html/env.js
 webrtc-streamer -w /usr/local/share/webrtc-streamer/html -C /usr/local/share/webrtc-streamer/config.json &
+
 
 tail -f /dev/null 

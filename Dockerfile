@@ -22,6 +22,7 @@ pipewire-audio-client-libraries \
 alsa-utils \
 ca-certificates \
 dbus-x11 \
+sed \
 curl \
 rtkit \
 && apt-get clean && rm -rf /var/lib/apt/lists/ 

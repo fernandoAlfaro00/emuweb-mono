@@ -1,0 +1,53 @@
+<html>
+<head>
+</head>
+<body> 
+	<script>
+    
+    // Creamos un objeto para mantener el estado de los botones
+    const buttonStates = [];
+
+    function updateGamepad() {
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+
+        for (let gp of gamepads) {
+            if (!gp) continue; // Puede ser null
+
+            // Leer botones
+            gp.buttons.forEach((button, index) => {
+                // Inicializamos el estado del botón si no está configurado
+                if (buttonStates[index] === undefined) {
+                    buttonStates[index] = false;
+                }
+
+                // Solo mostramos el botón si el estado cambia (de no presionado a presionado)
+                if (button.pressed && !buttonStates[index]) {
+                    console.log("Button pressed:", index);
+                    buttonStates[index] = true; // Marcamos el botón como presionado
+                }
+                else if (!button.pressed && buttonStates[index]) {
+                    buttonStates[index] = false; // El botón ya no está presionado
+                }
+            });
+
+            // Leer sticks (joystick)
+            gp.axes.forEach((axis, index) => {
+                if (Math.abs(axis) > 0.1) { // Ignorar ligeras vibraciones
+                    console.log(`Axis ${index} moved:`, axis.toFixed(2));
+                }
+            });
+        }
+
+        requestAnimationFrame(updateGamepad);
+    }
+
+    // Espera a que haya un gamepad conectado
+    window.addEventListener("gamepadconnected", function(e) {
+        console.log("Gamepad connected:", e.gamepad);
+        requestAnimationFrame(updateGamepad);
+    });
+
+
+	</script>
+</body>
+</html>
